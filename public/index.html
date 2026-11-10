@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MojarraCut</title>
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="style.css">
+<script src="icons.js"></script>
+</head>
+<body>
+
+<!-- ============ MENÚ DE PROYECTOS ============ -->
+<section id="home" class="home hidden" aria-label="Proyectos">
+  <header class="home-top">
+    <div class="brand"><img src="icon.png" class="logo" alt=""> MojarraCut</div>
+    <div class="spacer"></div>
+    <button class="btn claude" id="hClaude" data-i="sparkles" title="Abrir Claude listo para editar tus videos">Editar con Claude</button>
+    <button class="btn ghost" id="hFolder" data-i="folder-open" title="Abrir la carpeta donde se guardan tus proyectos">Carpeta de datos</button>
+    <button class="btn ghost" id="hHelp" data-i="circle-help" title="Ayuda">Ayuda</button>
+  </header>
+  <div class="home-body">
+    <div class="home-head">
+      <div>
+        <h1>Tus proyectos</h1>
+        <p class="dim">Crea un proyecto nuevo o continúa uno existente. Todo se guarda automáticamente en tu equipo.</p>
+      </div>
+      <div class="home-actions">
+        <label class="search"><span data-i="search"></span><input id="hSearch" placeholder="Buscar proyecto…" aria-label="Buscar proyecto"></label>
+        <button class="btn primary big" id="hNew" data-i="plus">Nuevo proyecto</button>
+      </div>
+    </div>
+    <div id="hGrid" class="proj-grid" role="list"></div>
+  </div>
+</section>
+
+<!-- ============ EDITOR ============ -->
+<section id="editor" class="editor hidden">
+<header class="topbar">
+  <button class="icon-btn" id="btnHome" data-i="house" title="Volver a proyectos" aria-label="Volver a proyectos"></button>
+  <div class="brand"><img src="icon.png" class="logo" alt=""> MojarraCut</div>
+  <input id="projName" class="proj-name" spellcheck="false" title="Nombre del proyecto (clic para cambiarlo)" aria-label="Nombre del proyecto">
+  <div class="tb-group">
+    <button id="btnUndo" class="icon-btn" data-i="undo-2" title="Deshacer (Ctrl+Z)" aria-label="Deshacer"></button>
+    <button id="btnRedo" class="icon-btn" data-i="redo-2" title="Rehacer (Ctrl+Y)" aria-label="Rehacer"></button>
+  </div>
+  <span id="saveState" class="save-state" role="status" aria-live="polite"></span>
+  <span id="claudeState" class="claude-state" title="Claude puede editar este proyecto y verás los cambios al instante"><span class="dot"></span>Claude conectado</span>
+  <div class="spacer"></div>
+  <button id="btnLayout" class="btn ghost" data-i="layout-panel-left" title="Mostrar, ocultar o restablecer ventanas">Ventanas</button>
+  <button id="btnClaude" class="btn claude" data-i="sparkles" title="Mostrar u ocultar el chat con Claude">Claude</button>
+  <button id="btnHelp" class="btn ghost" data-i="keyboard" title="Atajos y ayuda (?)">Ayuda</button>
+  <button id="btnExport" class="btn primary" data-i="download">Exportar</button>
+</header>
+
+<div class="work-row">
+<main class="dock" id="dock">
+  <div class="slot" data-slot="0"></div>
+  <div class="splitter v" data-split="0" title="Arrastra para cambiar el tamaño"></div>
+  <div class="slot" data-slot="1"></div>
+  <div class="splitter v" data-split="1" title="Arrastra para cambiar el tamaño"></div>
+  <div class="slot" data-slot="2"></div>
+  <div class="splitter h" data-split="row" title="Arrastra para cambiar el tamaño"></div>
+  <div class="slot bottom" data-slot="3"></div>
+</main>
+<div class="splitter v" id="claudeSplit" title="Arrastra para cambiar el tamaño"></div>
+<section class="panel claude-panel" id="p-claude" data-panel="claude" aria-label="Chat con Claude">
+  <div class="panel-head"><span data-i="sparkles"></span><span class="ptitle">Claude</span><div class="spacer"></div>
+    <button class="icon-btn sm" id="ccNew" data-i="square-pen" title="Nueva conversación" aria-label="Nueva conversación"></button>
+    <button class="icon-btn sm" id="ccHide" data-i="x" title="Ocultar chat" aria-label="Ocultar chat"></button></div>
+  <div class="cc-log" id="ccLog" role="log" aria-live="polite"></div>
+  <div class="cc-input" id="ccInput">
+    <div class="cc-thumbs" id="ccThumbs"></div>
+    <textarea id="ccText" rows="3" placeholder="Pídele algo a Claude… (Enter envía · Shift+Enter nueva línea · pega o arrastra imágenes)"></textarea>
+    <div class="cc-bar">
+      <label class="icon-btn sm" title="Adjuntar imagen" aria-label="Adjuntar imagen"><span data-i="image-plus"></span><input type="file" id="ccFile" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden></label>
+      <select id="ccModel" title="Modelo" aria-label="Modelo"></select>
+      <select id="ccEffort" title="Esfuerzo: más esfuerzo = respuestas más pensadas, pero más lentas y gastan más" aria-label="Esfuerzo"></select>
+      <div class="spacer"></div>
+      <button class="btn small cc-go" id="ccSend" data-i="send">Enviar</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- Paneles (se colocan en los slots del dock) -->
+<div class="hidden" id="panelStore">
+  <section class="panel" id="p-media" data-panel="media">
+    <div class="panel-head" data-drag>
+      <span class="grip" data-i="grip-vertical"></span><span data-i="film"></span><span class="ptitle">Medios</span>
+      <div class="spacer"></div>
+      <button class="icon-btn sm" id="btnNewFolder" data-i="folder-plus" title="Nueva carpeta" aria-label="Nueva carpeta"></button>
+      <label class="btn small" title="Importar videos, imágenes, audio o subtítulos (.srt)"><span data-i="upload"></span>Importar<input id="fileInput" type="file" multiple accept="video/*,audio/*,image/*,.srt" hidden></label>
+    </div>
+    <div class="media-filter" role="tablist">
+      <button class="chip on" data-f="all">Todo</button><button class="chip" data-f="video">Video</button><button class="chip" data-f="image">Imagen</button><button class="chip" data-f="audio">Audio</button>
+    </div>
+    <div id="mediaCrumb" class="crumbs hidden"></div>
+    <div id="mediaList" class="media-list"></div>
+    <div class="drop-hint">Arrastra archivos aquí o al timeline · Doble clic = añadir en el cursor</div>
+  </section>
+
+  <section class="panel" id="p-viewer" data-panel="viewer">
+    <div class="panel-head" data-drag><span class="grip" data-i="grip-vertical"></span><span data-i="tv"></span><span class="ptitle">Visor</span><div class="spacer"></div><span class="dim small-txt" id="fmtLabel"></span></div>
+    <div class="stage-wrap" id="stageWrap"><canvas id="stage" tabindex="0" aria-label="Previsualización. Arrastra el clip seleccionado para moverlo"></canvas><div id="stageHint" class="stage-hint">El timeline está vacío. Importa medios o pídele un video a Claude.</div></div>
+    <div class="scrub" id="scrub" title="Línea de tiempo del visor: clic o arrastra para moverte · arrastra el recuadro para desplazar el timeline">
+      <div class="scrub-lanes" id="scrubLanes"></div>
+      <div class="scrub-view" id="scrubView"></div>
+      <div class="scrub-head" id="scrubHead"></div>
+    </div>
+    <div class="transport">
+      <button class="icon-btn" id="btnStart" data-i="skip-back" title="Ir al inicio (Inicio)" aria-label="Ir al inicio"></button>
+      <button class="icon-btn" id="btnPrev" data-i="chevron-left" title="Frame anterior (←)" aria-label="Frame anterior"></button>
+      <button class="icon-btn play" id="btnPlay" data-i="play" title="Reproducir / pausa (Espacio)" aria-label="Reproducir"></button>
+      <button class="icon-btn" id="btnNext" data-i="chevron-right" title="Frame siguiente (→)" aria-label="Frame siguiente"></button>
+      <button class="icon-btn" id="btnEnd" data-i="skip-forward" title="Ir al final (Fin)" aria-label="Ir al final"></button>
+      <div class="timecode"><span id="tcNow">00:00.00</span> <span class="dim">/ <span id="tcTotal">00:00.00</span></span></div>
+    </div>
+  </section>
+
+  <section class="panel" id="p-props" data-panel="props">
+    <div class="panel-head" data-drag><span class="grip" data-i="grip-vertical"></span><span data-i="sliders-horizontal"></span><span class="ptitle">Propiedades</span><div class="spacer"></div><span class="dim small-txt" id="propsKind"></span></div>
+    <div class="props-body" id="inspector"></div>
+  </section>
+
+  <section class="panel" id="p-timeline" data-panel="timeline">
+    <div class="panel-head tl-toolbar" data-drag>
+      <span class="grip" data-i="grip-vertical"></span><span data-i="layers"></span><span class="ptitle">Línea de tiempo</span><span class="sep"></span>
+      <button class="btn small" id="btnSplit" data-i="scissors" title="Cortar en el cursor (S)">Cortar</button>
+      <button class="btn small" id="btnDelete" data-i="trash-2" title="Eliminar selección (Supr)">Eliminar</button>
+      <button class="btn small" id="btnDup" data-i="copy" title="Duplicar (Ctrl+D)">Duplicar</button>
+      <button class="icon-btn sm" id="btnCopy" data-i="clipboard-copy" title="Copiar selección (Ctrl+C)" aria-label="Copiar"></button>
+      <button class="btn small" id="btnPaste" data-i="clipboard-paste" title="Pegar en el cursor (Ctrl+V)">Pegar</button>
+      <span class="sel-count" id="selCount" role="status"></span>
+      <span class="sep"></span>
+      <button class="btn small" id="btnAddText" data-i="type" title="Añadir subtítulo en el cursor (T)">Subtítulo</button>
+      <button class="btn small" id="btnTrans" data-i="blend" title="Añadir transición al clip seleccionado">Transición</button>
+      <label class="btn small" title="Importar subtítulos .srt"><span data-i="file-down"></span>SRT<input id="srtInput" type="file" accept=".srt" hidden></label>
+      <button class="btn small" id="btnSrtOut" data-i="file-up" title="Exportar subtítulos .srt">SRT</button>
+      <button class="btn small" id="btnAddTrack" data-i="plus" title="Añadir pista">Pista</button>
+      <div class="spacer"></div>
+      <label class="toggle" title="Ajustar a bordes y cursor"><input type="checkbox" id="snapToggle" checked><span data-i="magnet"></span>Imán</label>
+      <button class="icon-btn sm" id="zoomOut" data-i="zoom-out" title="Alejar (−)" aria-label="Alejar"></button>
+      <input type="range" id="zoom" min="5" max="400" value="60" aria-label="Zoom del timeline">
+      <button class="icon-btn sm" id="zoomIn" data-i="zoom-in" title="Acercar (+)" aria-label="Acercar"></button>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="tl-headers" id="tlHeaders"><div class="ruler-corner"></div><div id="trackHeads"></div></div>
+      <div class="tl-scroll" id="tlScroll">
+        <div class="tl-content" id="tlContent">
+          <div class="ruler" id="ruler"></div>
+          <div id="tracks"></div>
+          <div class="playhead" id="playhead"><div class="ph-knob"></div></div>
+          <div class="snapline" id="snapline"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</section>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-card" id="modalCard"></div></div>
+<div id="dropOverlay" class="drop-overlay hidden"><span data-i="upload"></span> Suelta para importar</div>
+<div id="dragGhost" class="drag-ghost hidden"></div>
+
+<script src="subs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

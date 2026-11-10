@@ -1,0 +1,47 @@
+{
+  "name": "mojarracut",
+  "productName": "MojarraCut",
+  "version": "1.4.1",
+  "description": "Editor de video asistido por Claude",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "electron . --test",
+    "icons": "node scripts/build-icons.js",
+    "dist": "node scripts/build-icons.js && electron-builder --win dir && electron scripts/setup-art.js && node scripts/make-setup.js",
+    "art": "electron scripts/setup-art.js"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "lucide-static": "^0.460.0"
+  },
+  "build": {
+    "appId": "com.mojarracut.app",
+    "productName": "MojarraCut",
+    "files": [
+      "main.js",
+      "server.js",
+      "CLAUDE.md",
+      "public/**",
+      "node_modules/**",
+      "!node_modules/lucide-static/**",
+      "build/icon.png"
+    ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**",
+      "node_modules/ffprobe-static/bin/win32/x64/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "dir",
+      "icon": "build/icon.png"
+    }
+  }
+}
