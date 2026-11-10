@@ -559,12 +559,14 @@ function serveFile(req, res, file) {
     const range = req.headers.range;
     if (range) {
       const [s, e] = range.replace('bytes=', '').split('-');
-      const start = Number(s), end = e ? Math.min(Number(e), st.size - 1) : st.size - 1;
+      const start = Number(s) || 0, end = e ? Math.min(Number(e), st.size - 1) : st.size - 1;
+      // archivo vacío (p. ej. aún descargándose) o rango imposible: 416 en vez de romper el servidor
+      if (!st.size || !(start >= 0) || !(end >= start)) { res.writeHead(416, { 'Content-Range': `bytes */${st.size}` }); return res.end(); }
       res.writeHead(206, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Content-Range': `bytes ${start}-${end}/${st.size}`, 'Content-Length': end - start + 1 });
-      fs.createReadStream(file, { start, end }).pipe(res);
+      fs.createReadStream(file, { start, end }).on('error', () => res.destroy()).pipe(res);
     } else {
       res.writeHead(200, { 'Content-Type': type, 'Content-Length': st.size, 'Accept-Ranges': 'bytes', 'Cache-Control': 'no-cache' });
-      fs.createReadStream(file).pipe(res);
+      fs.createReadStream(file).on('error', () => res.destroy()).pipe(res);
     }
   });
 }

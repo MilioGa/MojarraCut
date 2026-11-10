@@ -7,7 +7,7 @@
 **Editor de video para Windows en el que Claude edita contigo.**
 Pídele un video en lenguaje natural y míralo armarse en la línea de tiempo.
 
-![Versión](https://img.shields.io/badge/versión-1.4.1-7c6cff?style=flat-square)
+![Versión](https://img.shields.io/badge/versión-1.4.2-7c6cff?style=flat-square)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078d4?style=flat-square&logo=windows&logoColor=white)
 ![Electron](https://img.shields.io/badge/Electron-33-47848f?style=flat-square&logo=electron&logoColor=white)
 ![Claude](https://img.shields.io/badge/Claude-integrado-d97757?style=flat-square&logo=anthropic&logoColor=white)

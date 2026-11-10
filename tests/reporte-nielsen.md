@@ -1,6 +1,6 @@
 # Pruebas de usabilidad — 10 heurísticas de Nielsen
 
-Fecha: 2026-11-09T20:53:28.443Z · Resultado: **47/47** comprobaciones superadas
+Fecha: 2026-11-10T05:54:42.784Z · Resultado: **47/47** comprobaciones superadas
 
 ## ✅ 1. Visibilidad del estado del sistema (5/5)
 
@@ -28,7 +28,7 @@ Fecha: 2026-11-09T20:53:28.443Z · Resultado: **47/47** comprobaciones superadas
 ## ✅ 4. Consistencia y estándares (5/5)
 
 - ✔ Todos los botones de icono tienen título o etiqueta accesible — 52 botones revisados
-- ✔ Iconos vectoriales consistentes (sin emojis en la interfaz) — 95 iconos SVG; 0 con emoji
+- ✔ Iconos vectoriales consistentes (sin emojis en la interfaz) — 96 iconos SVG; 0 con emoji
 - ✔ Un único estilo de botón primario visible por pantalla — Exportar
 - ✔ La tecla Supr elimina cualquier tipo de selección (clip/pista) — Pista vacía eliminada con Supr
 - ✔ Clic derecho en encabezado de pista ofrece Eliminar

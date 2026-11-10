@@ -15,6 +15,10 @@ if (TEST) process.env.PORT = '5191';
 try { process.env.MOJARRA_FFMPEG = unpack(require('ffmpeg-static')); } catch {}
 try { process.env.MOJARRA_FFPROBE = unpack(require('ffprobe-static').path); } catch {}
 
+// Un error inesperado no debe mostrar ventanas al usuario ni cerrar la app: se registra y se sigue
+const logErr = (e) => { try { fs.appendFileSync(path.join(process.env.MOJARRA_DIR, 'errores.log'), `[${new Date().toISOString()}] ${e && e.stack || e}\n`); } catch {} };
+process.on('uncaughtException', logErr); process.on('unhandledRejection', logErr);
+
 let win;
 app.whenReady().then(async () => {
   const port = await require('./server.js');
